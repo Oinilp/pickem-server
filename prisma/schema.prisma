@@ -1,0 +1,78 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model Competition {
+  id                BigInt   @id @default(autoincrement()) 
+  external_id       BigInt   @unique                     
+  sport_alias       String
+  name              String
+  status            String
+
+  start_date        BigInt?
+  end_date          BigInt?
+
+  prize_pool_usd    BigInt?
+  location          String?
+  organizer         String?
+  type              String?
+
+  tier              String?
+  series            String?
+  year              String?
+
+  image_url         String?
+
+  updated_at        DateTime?
+  ingested_at       DateTime @default(now())
+
+  @@index([sport_alias, status])
+  @@index([updated_at])
+}
+
+model Fixture {
+  id                      BigInt   @id
+
+  competition_id          BigInt
+  competition_name        String?
+
+  sport_alias             String
+  sport_name              String?
+
+  status                  String?
+
+  // timestamps (ms)
+  scheduled_start_time    BigInt?
+  start_time              BigInt?
+  end_time                BigInt?
+
+  // result info
+  tie                     Int?
+  winner_id               BigInt?
+
+  // participants
+  participants0_id        BigInt?
+  participants0_name      String?
+  participants0_score     Int?
+
+  participants1_id        BigInt?
+  participants1_name      String?
+  participants1_score     Int?
+
+  // misc
+  hs_description           String?
+  rr_description           String?
+
+  manual_override          Int?
+  manual_updated_at        DateTime?
+
+  ingested_at              DateTime @default(now())
+
+  @@index([sport_alias])
+  @@index([competition_id])
+  @@index([start_time])
+}
